@@ -1,0 +1,34 @@
+# 1800000 30 min | 600000  # 10 min
+server:
+  port: 9190
+  servlet: 
+    context-path: /pfc-services
+
+
+spring: 
+  datasource: 
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/pelada?verifyServerCertificate=false&useSSL=false&requireSSL=false
+    username: pelada
+    password: pelada2008
+  jpa: 
+    open-in-view: false
+    
+    hibernate:
+      naming_strategy: org.hibernate.cfg.EJB3NamingStrategy
+      naming:
+#       implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties: 
+      hibernate: 
+        show_sql: true
+#        hbm2ddl.auto: update
+#        jdbc.lob.non_contextual_creation: true
+#  jackson:
+#    serialization.write_dates_as_timestamps: false
+#    default-property-inclusion: non_null
+
+
+logging:
+  level:
+    br.com.softplan.ungp.saff.sigp: DEBUG
