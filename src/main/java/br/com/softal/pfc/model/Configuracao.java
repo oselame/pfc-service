@@ -2,12 +2,9 @@ package br.com.softal.pfc.model;
 
 import java.io.Serializable;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
 public class Configuracao implements Serializable {
+
+	private static final long serialVersionUID = 5971769401991329827L;
 
 
 /*	@Id

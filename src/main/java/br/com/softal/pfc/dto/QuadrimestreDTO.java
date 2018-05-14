@@ -1,17 +1,21 @@
 package br.com.softal.pfc.dto;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public class RankingDTO {
+public class QuadrimestreDTO {
 
 	private Integer nuAno;
 	private Integer cdQuadrimestre;
-	private List<RankingSocioDTO> socios;
 
-	public RankingDTO() {
+	public QuadrimestreDTO() {
 		super();
-		setSocios(new ArrayList<RankingSocioDTO>());
+	}
+
+	public QuadrimestreDTO(ResultSet rs) throws SQLException {
+		this();
+		setNuAno(rs.getInt("nuAno"));
+		setCdQuadrimestre(rs.getInt("cdQuadrimestre"));
 	}
 
 	public Integer getCdQuadrimestre() {
@@ -20,14 +24,6 @@ public class RankingDTO {
 
 	public void setCdQuadrimestre(Integer cdQuadrimestre) {
 		this.cdQuadrimestre = cdQuadrimestre;
-	}
-
-	public List<RankingSocioDTO> getSocios() {
-		return socios;
-	}
-
-	public void setSocios(List<RankingSocioDTO> socios) {
-		this.socios = socios;
 	}
 
 	public Integer getNuAno() {

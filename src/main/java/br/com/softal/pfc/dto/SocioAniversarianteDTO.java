@@ -1,6 +1,7 @@
 package br.com.softal.pfc.dto;
 
-import java.util.Base64;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import org.springframework.util.Base64Utils;
 
@@ -12,6 +13,18 @@ public class SocioAniversarianteDTO {
 	private Integer nuMes;
 	private byte[] foto;
 	
+	public SocioAniversarianteDTO() {
+		super();
+	}
+	
+	public SocioAniversarianteDTO(ResultSet rs) throws SQLException {
+		setCdSocio(rs.getInt("cdSocio"));
+		setNmApelido(rs.getString("nmApelido"));
+		setNuDia(rs.getInt("nuDia"));
+		setNuMes(rs.getInt("nuMes"));
+		setFoto(rs.getBytes("imFoto"));
+	}
+	
 	public SocioAniversarianteDTO(Integer cdSocio, String nmApelido, Integer nuDia, Integer nuMes, byte[] foto) {
 		super();
 		this.cdSocio = cdSocio;
@@ -19,10 +32,6 @@ public class SocioAniversarianteDTO {
 		this.nuDia = nuDia;
 		this.nuMes = nuMes;
 		this.foto = foto;
-	}
-
-	public SocioAniversarianteDTO() {
-		this(null, null, null, null, null);
 	}
 
 	public Integer getCdSocio() {

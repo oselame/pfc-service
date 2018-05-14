@@ -1,5 +1,8 @@
 package br.com.softal.pfc.dto;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 public class RankingSocioDTO {
 
 	private Integer cdQuadrimestre;
@@ -17,15 +20,35 @@ public class RankingSocioDTO {
 	private Integer nuCartaoazul;
 	private Integer nuCartaoamarelo;
 	private Integer nuPosicaoanterior;
+	private Integer nuGols;
 	
 	public RankingSocioDTO() {
 		super();
 	}
 	
+	public RankingSocioDTO(ResultSet rs) throws SQLException {
+		setCdQuadrimestre(rs.getInt("cdQuadrimestre"));
+		setCdPartida(rs.getInt("cdPartida"));
+		setCdSocio(rs.getInt("cdSocio"));                		
+        setNmApelido(rs.getString("nmApelido")); 
+        setNmSocio(rs.getString("nmSocio"));                        
+        setNuClassificacao(rs.getInt("nuClassificacao"));
+        setNuPontos(rs.getInt("nuPontos"));
+        setNuJogos(rs.getInt("nuJogos"));
+        setNuVitorias(rs.getInt("nuVitorias"));
+        setNuEmpates(rs.getInt("nuEmpates"));
+        setNuDerrotas(rs.getInt("nuDerrotas"));
+        setNuCartaovermelho(rs.getInt("nuCartaovermelho"));
+        setNuCartaoazul(rs.getInt("nuCartaoazul"));
+        setNuCartaoamarelo(rs.getInt("nuCartaoamarelo"));
+        setNuPosicaoanterior(rs.getInt("nuPosicaoanterior"));
+        setNuGols(rs.getInt("nuGols"));
+	}
+	
 	public RankingSocioDTO(Integer cdQuadrimestre, Integer cdPartida, Integer cdSocio, String nmApelido, String nmSocio,
 			Integer nuClassificacao, Integer nuPontos, Integer nuJogos, Integer nuVitorias, Integer nuEmpates,
 			Integer nuDerrotas, Integer nuCartaovermelho, Integer nuCartaoazul, Integer nuCartaoamarelo,
-			Integer nuPosicaoanterior) {
+			Integer nuPosicaoanterior, Integer nuGols) {
 		super();
 		this.cdQuadrimestre = cdQuadrimestre;
 		this.cdPartida = cdPartida;
@@ -42,6 +65,7 @@ public class RankingSocioDTO {
 		this.nuCartaoazul = nuCartaoazul;
 		this.nuCartaoamarelo = nuCartaoamarelo;
 		this.nuPosicaoanterior = nuPosicaoanterior;
+		this.nuGols = nuGols;
 	}
 
 	public Integer getCdSocio() {
@@ -163,5 +187,14 @@ public class RankingSocioDTO {
 	public void setNuPosicaoanterior(Integer nuPosicaoanterior) {
 		this.nuPosicaoanterior = nuPosicaoanterior;
 	}
+
+	public Integer getNuGols() {
+		return nuGols;
+	}
+
+	public void setNuGols(Integer nuGols) {
+		this.nuGols = nuGols;
+	}
+	
 
 }

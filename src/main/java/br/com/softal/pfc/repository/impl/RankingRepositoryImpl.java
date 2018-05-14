@@ -24,7 +24,7 @@ public class RankingRepositoryImpl extends BaseRepositoryImpl {
 			}
 		}
 	}
-
+	
 	public RankingDTO findRankingQuadrimestreAtual() {
 		List<RankingSocioDTO> rankingSocios = jdbcTemplate.query(
                 " Select c.cdQuadrimestre, c.cdPartida, s.cdSocio, s.nmApelido, s.nmSocio, " +
@@ -56,7 +56,8 @@ public class RankingRepositoryImpl extends BaseRepositoryImpl {
                         rs.getInt("nuCartaovermelho"),
                         rs.getInt("nuCartaoazul"),
                         rs.getInt("nuCartaoamarelo"),
-                        rs.getInt("nuPosicaoanterior"))
+                        rs.getInt("nuPosicaoanterior"), 
+                        0)
         );
 		
 		ajustaApelido(rankingSocios);
@@ -98,7 +99,8 @@ public class RankingRepositoryImpl extends BaseRepositoryImpl {
                         rs.getInt("nuCartaovermelho"),
                         rs.getInt("nuCartaoazul"),
                         rs.getInt("nuCartaoamarelo"),
-                        rs.getInt("nuPosicaoanterior"))
+                        rs.getInt("nuPosicaoanterior"),
+                        0)
         );
 		ajustaApelido(rankingSocios);
 		RankingDTO dto = new RankingDTO();
@@ -106,5 +108,44 @@ public class RankingRepositoryImpl extends BaseRepositoryImpl {
 		dto.setSocios(rankingSocios);
 		return dto;
 	}
+	
+	public RankingDTO findRankingQuadrimestre(Integer nuAno, Integer cdQuadrimestre) {
+		List<RankingSocioDTO> rankingSocios = jdbcTemplate.query(
+    		"\n Select s.cdSocio, s.nmApelido, s.nmSocio,  " + 
+			"\n 	c.cdPartida, c.cdQuadrimestre, c.nuClassificacao, c.nuPontos,  " + 
+			"\n 	c.nuJogos, c.nuVitorias, c.nuEmpates, c.nuDerrotas, c.nuCartaovermelho,  " + 
+			"\n 	c.nuCartaoazul, c.nuCartaoamarelo, c.nuPosicaoanterior, y.nuGols  " + 
+			"\n from epfcsocio s  " + 
+			"\n join epfcclassificacao c on   " + 
+			"\n 	s.cdSocio = c.cdSocio   " + 
+			"\n 	and c.cdPartida = (Select max(x.cdPartida) from epfcclassificacao x " + 
+			"\n 			           where x.nuAno = c.nuAno " + 
+			"\n 					   and x.cdQuadrimestre = c.cdQuadrimestre)  " + 
+			"\n left join (  " + 
+			"\n 		SELECT p.nuAno, p.cdQuadrimestre, sp.cdSocio, sum(sp.nuGol) as nuGols  " + 
+			"\n 		FROM epfcsociopartida sp  " + 
+			"\n 		INNER JOIN epfcpartida p on sp.cdPartida = p.cdPartida  " + 
+			"\n 		GROUP BY p.nuAno, p.cdQuadrimestre,sp.cdSocio " + 
+			"\n 	) y on y.nuAno = c.nuAno and y.cdQuadrimestre = c.cdQuadrimestre and y.cdSocio = s.cdSocio " + 
+			"\n Where coalesce(s.flForauso, 0) = 0 " + 
+			"\n and c.nuJogos <> 0  " + 
+			"\n and c.nuAno = ? " + 
+			"\n and c.cdQuadrimestre = ? " + 
+			"\n order by c.nuClassificacao asc ",
+            (rs, rowNum) -> new RankingSocioDTO(rs),
+            new Object[] { nuAno, cdQuadrimestre }
+        );
+		RankingDTO dto = new RankingDTO();
+		dto.setNuAno( nuAno );
+		dto.setCdQuadrimestre( cdQuadrimestre );
+		if (!rankingSocios.isEmpty()) {
+			ajustaApelido(rankingSocios);
+			dto.setSocios(rankingSocios);
+		}
+		return dto;
+	}
+	
+	
+	
 
 }

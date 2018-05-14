@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import br.com.softal.pfc.dto.FotogaleriaDTO;
 import br.com.softal.pfc.dto.GaleriaDTO;
-import br.com.softal.pfc.model.Fotogaleria;
 import br.com.softal.pfc.model.Galeria;
 import br.com.softal.pfc.repository.GaleriaRepository;
 import br.com.softal.pfc.repository.impl.GaleriaRepositoryImpl;

@@ -10,7 +10,7 @@ import br.com.softal.pfc.repository.impl.RankingRepositoryImpl;
 public class RankingService {
 	
 	@Autowired
-	private RankingRepositoryImpl rankingRepositoryImpl;		
+	private RankingRepositoryImpl rankingRepositoryImpl;
 	
 	public RankingDTO findRankingQuadrimestreAtual() {
 		return rankingRepositoryImpl.findRankingQuadrimestreAtual();
@@ -18,6 +18,10 @@ public class RankingService {
 	
 	public RankingDTO findRankingQuadrimestreAnual() {
 		return rankingRepositoryImpl.findRankingQuadrimestreAnual();
+	}
+	
+	public RankingDTO findRankingQuadrimestre(Integer nuAno, Integer cdQuadrimestre) {
+		return rankingRepositoryImpl.findRankingQuadrimestre(nuAno, cdQuadrimestre);
 	}
 	
 	

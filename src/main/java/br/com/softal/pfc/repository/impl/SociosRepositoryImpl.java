@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import br.com.softal.pfc.dto.SocioAniversarianteDTO;
+import br.com.softal.pfc.model.SocioEnum;
 
 @Repository
 public class SociosRepositoryImpl extends BaseRepositoryImpl {
@@ -22,14 +23,10 @@ public class SociosRepositoryImpl extends BaseRepositoryImpl {
                 "WHERE coalesce(flForauso,0) = 0 \n" +
                 "AND ((extract(month from dtNascimento) = ? and extract(day from dtNascimento) >= ?) \n" + 
                 "     or (extract(month from dtNascimento) > ?)) \n" +
+                "AND tpSocio <> ? \n" +
                 "ORDER BY 5, 4, 3 ",                
-                (rs, rowNum) -> new SocioAniversarianteDTO(
-                		rs.getInt("cdSocio"),
-                		rs.getString("nmApelido"), 
-                		rs.getInt("nuDia"),
-                		rs.getInt("nuMes"),
-                		rs.getBytes("imFoto"))
-                , new Object[] { nuMes, nuDia, nuMes }
+                (rs, rowNum) -> new SocioAniversarianteDTO( rs )
+                , new Object[] { nuMes, nuDia, nuMes, SocioEnum.AVULSO.getTpSocio() }
         );
 		return sociosAniversariantes;
 	}
@@ -41,7 +38,7 @@ public class SociosRepositoryImpl extends BaseRepositoryImpl {
 		List<SocioAniversarianteDTO> sociosMesDiaAnoAtual = findAllAniversariantesMesDia(nuDia, nuMes);
 		List<SocioAniversarianteDTO> sociosProximoAno = findAllAniversariantesMesDia(1, 1);
 		sociosMesDiaAnoAtual.addAll( sociosProximoAno );
-		return sociosMesDiaAnoAtual.subList(1, sociosProximoAno.size());
+		return sociosMesDiaAnoAtual.subList(0, sociosProximoAno.size());
 	}
 
 
