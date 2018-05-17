@@ -1,5 +1,7 @@
 package br.com.softal.pfc.repository.impl;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,43 +111,82 @@ public class RankingRepositoryImpl extends BaseRepositoryImpl {
 		return dto;
 	}
 	
-	public RankingDTO findRankingQuadrimestre(Integer nuAno, Integer cdQuadrimestre) {
-		List<RankingSocioDTO> rankingSocios = jdbcTemplate.query(
-    		"\n Select s.cdSocio, s.nmApelido, s.nmSocio,  " + 
-			"\n 	c.cdPartida, c.cdQuadrimestre, c.nuClassificacao, c.nuPontos,  " + 
-			"\n 	c.nuJogos, c.nuVitorias, c.nuEmpates, c.nuDerrotas, c.nuCartaovermelho,  " + 
-			"\n 	c.nuCartaoazul, c.nuCartaoamarelo, c.nuPosicaoanterior, y.nuGols  " + 
-			"\n from epfcsocio s  " + 
-			"\n join epfcclassificacao c on   " + 
-			"\n 	s.cdSocio = c.cdSocio   " + 
-			"\n 	and c.cdPartida = (Select max(x.cdPartida) from epfcclassificacao x " + 
-			"\n 			           where x.nuAno = c.nuAno " + 
-			"\n 					   and x.cdQuadrimestre = c.cdQuadrimestre)  " + 
-			"\n left join (  " + 
-			"\n 		SELECT p.nuAno, p.cdQuadrimestre, sp.cdSocio, sum(sp.nuGol) as nuGols  " + 
-			"\n 		FROM epfcsociopartida sp  " + 
-			"\n 		INNER JOIN epfcpartida p on sp.cdPartida = p.cdPartida  " + 
-			"\n 		GROUP BY p.nuAno, p.cdQuadrimestre,sp.cdSocio " + 
-			"\n 	) y on y.nuAno = c.nuAno and y.cdQuadrimestre = c.cdQuadrimestre and y.cdSocio = s.cdSocio " + 
-			"\n Where coalesce(s.flForauso, 0) = 0 " + 
-			"\n and c.nuJogos <> 0  " + 
-			"\n and c.nuAno = ? " + 
-			"\n and c.cdQuadrimestre = ? " + 
-			"\n order by c.nuClassificacao asc ",
+	public RankingDTO findRankingQuadrimestre(Integer nuAno, Integer cdQuadrimestre, boolean isRanking) {
+		StringBuilder sql = new StringBuilder();
+		sql.append("\n Select s.cdSocio, s.nmApelido, s.nmSocio, ");
+		sql.append("\n 		c.cdPartida, c.cdQuadrimestre, c.nuClassificacao, c.nuPontos,  ");
+		sql.append("\n 		c.nuJogos, c.nuVitorias, c.nuEmpates, c.nuDerrotas, c.nuCartaovermelho,  ");
+		sql.append("\n 		c.nuCartaoazul, c.nuCartaoamarelo, c.nuPosicaoanterior, y.nuGols  ");
+		sql.append("\n from epfcsocio s  ");
+		sql.append("\n join epfcclassificacao c on  ");
+		sql.append("\n 		s.cdSocio = c.cdSocio   ");
+		sql.append("\n 		and c.cdPartida = (	Select max(x.cdPartida) from epfcclassificacao x ");
+		sql.append("\n 			           		where x.nuAno = c.nuAno ");
+		sql.append("\n 					   		and x.cdQuadrimestre = c.cdQuadrimestre)  ");
+		sql.append("\n left join (  ");
+		sql.append("\n 		SELECT sp.cdSocio, sum(sp.nuGol) as nuGols  ");
+		sql.append("\n 		FROM epfcsociopartida sp  ");
+		sql.append("\n 		INNER JOIN epfcpartida p on sp.cdPartida = p.cdPartida  ");
+		sql.append("\n 		WHERE p.nuAno = ? ");
+		if (cdQuadrimestre.intValue() != 4) {
+			sql.append("\n 		and p.cdQuadrimestre = ? ");
+		}
+		sql.append("\n 		GROUP BY sp.cdSocio ");
+		sql.append("\n 	) y on y.cdSocio = s.cdSocio ");
+		sql.append("\n Where coalesce(s.flForauso, 0) = 0 ");
+		sql.append("\n and c.nuJogos <> 0  ");
+		sql.append("\n and c.nuAno = ? ");
+		sql.append("\n and c.cdQuadrimestre = ? ");
+		if (isRanking) {
+			sql.append("\n order by c.nuClassificacao asc ");
+		} else {
+			sql.append("\n and y.nuGols > 0  ");
+			sql.append("\n order by y.nuGols desc ");
+		}
+		
+		Object[] params = new Object[] { nuAno, nuAno, cdQuadrimestre };
+		if (cdQuadrimestre.intValue() != 4) {
+			params = new Object[] { nuAno, cdQuadrimestre, nuAno, cdQuadrimestre };
+		}
+		List<RankingSocioDTO> rankingSocios = jdbcTemplate.query(sql.toString(),
             (rs, rowNum) -> new RankingSocioDTO(rs),
-            new Object[] { nuAno, cdQuadrimestre }
+            params
         );
 		RankingDTO dto = new RankingDTO();
 		dto.setNuAno( nuAno );
 		dto.setCdQuadrimestre( cdQuadrimestre );
 		if (!rankingSocios.isEmpty()) {
 			ajustaApelido(rankingSocios);
+			ordenaLista(rankingSocios, isRanking);
 			dto.setSocios(rankingSocios);
 		}
 		return dto;
 	}
-	
-	
+
+	private void ordenaLista(List<RankingSocioDTO> rankingSocios, boolean isRanking) {
+		if (isRanking) {
+			return;
+		}
+		
+		Collections.sort(rankingSocios, new Comparator<RankingSocioDTO>() {
+			public int compare(RankingSocioDTO o1, RankingSocioDTO o2) {
+				int ret = o2.getNuGols() - o1.getNuGols();
+				if (ret == 0) {
+					ret = o2.getNuPontos() - o1.getNuPontos();
+				}
+				if (ret == 0) {
+					ret = o2.getNuPosicaoanterior() - o1.getNuPosicaoanterior();
+				}
+				return ret;
+			}
+		});
+		
+		int nuPosicao = 0;
+		for (RankingSocioDTO dto: rankingSocios) {
+			dto.setNuClassificacao(++nuPosicao);
+		}
+		
+	}
 	
 
 }

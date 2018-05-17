@@ -27,7 +27,7 @@ public class RankingController {
 	@GetMapping("/quadrimestreAtual")
 	@ResponseBody
     @ResponseStatus(value = HttpStatus.OK)
-    @ApiOperation(value = "Ranking - Busca ranking do quadrimestre atual")
+    @ApiOperation(value = "Busca ranking do quadrimestre atual")
     @ApiResponses(value = { @ApiResponse(code = 200, response = RankingDTO.class, message = "Operação realizada."), 
                             @ApiResponse(code = 400, message = "Argumentos inválidos."), 
                             @ApiResponse(code = 401, message = "Sem permissão."), 
@@ -39,7 +39,7 @@ public class RankingController {
 	@GetMapping("/quadrimestreAnual")
 	@ResponseBody
     @ResponseStatus(value = HttpStatus.OK)
-    @ApiOperation(value = "Ranking - Busca ranking do quadrimestre anual")
+    @ApiOperation(value = "Busca ranking do quadrimestre anual")
     @ApiResponses(value = { @ApiResponse(code = 200, response = RankingDTO.class, message = "Operação realizada."), 
                             @ApiResponse(code = 400, message = "Argumentos inválidos."), 
                             @ApiResponse(code = 401, message = "Sem permissão."), 
@@ -51,7 +51,7 @@ public class RankingController {
 	@GetMapping("/quadrimestre")
 	@ResponseBody
     @ResponseStatus(value = HttpStatus.OK)
-    @ApiOperation(value = "Ranking - Busca ranking do quadrimestre")
+    @ApiOperation(value = "Busca ranking do quadrimestre")
     @ApiResponses(value = { @ApiResponse(code = 200, response = RankingDTO.class, message = "Operação realizada."), 
                             @ApiResponse(code = 400, message = "Argumentos inválidos."), 
                             @ApiResponse(code = 401, message = "Sem permissão."), 
@@ -60,4 +60,16 @@ public class RankingController {
 		return rankingService.findRankingQuadrimestre(nuAno, cdQuadrimestre);
 	}
 
+	@GetMapping("/artilheiro")
+	@ResponseBody
+    @ResponseStatus(value = HttpStatus.OK)
+    @ApiOperation(value = "Busca artilheiros do quadrimestre")
+    @ApiResponses(value = { @ApiResponse(code = 200, response = RankingDTO.class, message = "Operação realizada."), 
+                            @ApiResponse(code = 400, message = "Argumentos inválidos."), 
+                            @ApiResponse(code = 401, message = "Sem permissão."), 
+                            @ApiResponse(code = 500, message = "Erro durante o processamento.") })
+	public RankingDTO findArtilheiroQuadrimestre(@RequestParam Integer nuAno, @RequestParam Integer cdQuadrimestre) {
+		return rankingService.findArtilheirosQuadrimestre(nuAno, cdQuadrimestre);
+	}	
+	
 }

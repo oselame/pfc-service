@@ -21,7 +21,11 @@ public class RankingService {
 	}
 	
 	public RankingDTO findRankingQuadrimestre(Integer nuAno, Integer cdQuadrimestre) {
-		return rankingRepositoryImpl.findRankingQuadrimestre(nuAno, cdQuadrimestre);
+		return rankingRepositoryImpl.findRankingQuadrimestre(nuAno, cdQuadrimestre, true);
+	}
+	
+	public RankingDTO findArtilheirosQuadrimestre(Integer nuAno, Integer cdQuadrimestre) {
+		return rankingRepositoryImpl.findRankingQuadrimestre(nuAno, cdQuadrimestre, false);
 	}
 	
 	
