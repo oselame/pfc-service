@@ -32,7 +32,7 @@ public class SwaggerConfig {
 	
 	private ApiInfo apiInfo() {
 	     return new ApiInfo(
-	       "PeladaFC Services API (0.0.4)", 
+	       "PeladaFC Services API (0.0.5)", 
 	       "Api de dados do Site PeladaFC. ", 
 	       "", 
 	       "", 

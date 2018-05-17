@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -27,13 +29,13 @@ import br.com.softal.pfc.exception.PfcException;
 
 @Service
 public class JantarService {
-
+	
 	private String readFromInputStream(InputStream inputStream) throws IOException {
 		StringBuilder resultStringBuilder = new StringBuilder();
 		try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
 			String line;
 			while ((line = br.readLine()) != null) {
-				resultStringBuilder.append(line).append("\n");
+				resultStringBuilder.append( line ).append("\n");
 			}
 		}
 		return resultStringBuilder.toString();

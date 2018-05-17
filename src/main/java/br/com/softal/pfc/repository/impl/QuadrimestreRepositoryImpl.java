@@ -1,11 +1,13 @@
 package br.com.softal.pfc.repository.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import br.com.softal.pfc.dto.AnoDTO;
 import br.com.softal.pfc.dto.QuadrimestreDTO;
 
 @Repository
@@ -42,6 +44,33 @@ public class QuadrimestreRepositoryImpl extends BaseRepositoryImpl {
 			return query.get(0);
 		}
 		return new QuadrimestreDTO();
+	}
+	
+	public List<AnoDTO> findListaAnos() {
+		List<QuadrimestreDTO> query = jdbcTemplate.query(
+	            "select q.nuAno, q.cdQuadrimestre \n" + 
+	            "from epfcquadrimestre q \n" + 
+	            "where exists (select 1 from epfcclassificacao c \n" + 
+	            "		       where c.nuAno = q.nuAno \n" + 
+	            "              and c.cdQuadrimestre = q.cdQuadrimestre) \n" + 
+	            "order by q.nuAno, q.cdQuadrimestre",                
+	            (rs, rowNum) -> new QuadrimestreDTO(rs)
+        );
+		
+		List<AnoDTO> anos = new ArrayList<AnoDTO>();
+		AnoDTO anodto = null;
+		Integer nuAno = 0;
+		for (QuadrimestreDTO dto : query) {
+			if (!dto.getNuAno().equals(nuAno)) {
+				nuAno = dto.getNuAno();
+				anodto = new AnoDTO();
+				anodto.setNuAno(nuAno);
+				anos.add(anodto);
+			}
+			anodto.getQuadrimestres().add(dto);
+		}
+		
+		return anos;	
 	}
 	
 

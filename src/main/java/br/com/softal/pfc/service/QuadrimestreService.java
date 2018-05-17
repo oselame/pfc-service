@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.softal.pfc.dto.AnoDTO;
 import br.com.softal.pfc.dto.QuadrimestreDTO;
 import br.com.softal.pfc.repository.impl.QuadrimestreRepositoryImpl;
 
@@ -20,6 +21,10 @@ public class QuadrimestreService {
 
 	public QuadrimestreDTO findQuadrimestreAtual() {
 		return quadrimestreRepositoryImpl.findQuadrimestreAtual();
+	}
+	
+	public List<AnoDTO> findListaAnos() {
+		return quadrimestreRepositoryImpl.findListaAnos();
 	}
 		
 }

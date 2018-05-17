@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import br.com.softal.pfc.dto.AnoDTO;
 import br.com.softal.pfc.dto.QuadrimestreDTO;
 import br.com.softal.pfc.service.QuadrimestreService;
 import io.swagger.annotations.Api;
@@ -48,5 +49,17 @@ public class QuadrimestreController {
                             @ApiResponse(code = 500, message = "Erro durante o processamento.") })
 	public QuadrimestreDTO findQuadrimestreAtual() {
 		return service.findQuadrimestreAtual();
+	}
+	
+	@GetMapping("/anos")
+	@ResponseBody
+    @ResponseStatus(value = HttpStatus.OK)
+    @ApiOperation(value = "Busca lista de anos")
+    @ApiResponses(value = { @ApiResponse(code = 200, response = AnoDTO.class, message = "Operação realizada."), 
+                            @ApiResponse(code = 400, message = "Argumentos inválidos."), 
+                            @ApiResponse(code = 401, message = "Sem permissão."), 
+                            @ApiResponse(code = 500, message = "Erro durante o processamento.") })
+	public List<AnoDTO> findListaAnos() {
+		return service.findListaAnos();
 	}
 }
